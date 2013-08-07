@@ -3,6 +3,9 @@
 	<meta charset="utf-8">
 	<head>
 		<title>_playGnd - editor</title>
+		
+		<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
 		<link rel="stylesheet" href="js/codemirror/codemirror.css">
 		<script src="js/codemirror/codemirror.js"></script>
 		<script src="js/codemirror/mode/xml.js"></script>
@@ -158,17 +161,24 @@
 				top: 28px;
 				right: 30px;
 				text-align: right;
+				z-index: 99999999;
 
 			}
 
 			.menu {
 				position: absolute;
-				top:0px; left:0px; z-index: 1000;
+				top:0px; left:0px;
 				height: 22px; width:100%;
-				color:#fff; background-color: #000;
-				font-size: 11px;
-				padding: 6px 0 0 10px;
+				color:#222; 
+				background-color: #000;
+				font-size: 13px;
+				font-family: 'Lucida Grande', Ariel, sans-serif;
+				padding: 6px 0 2px 10px;
+				margin-top: -2px;
+				z-index: 1000;
 			}
+			.menu a { color:#777; }
+			.menu a:hover { color:#e43f8c; }
 
 
 			#popup {
@@ -179,6 +189,7 @@
 				padding: 20px 20px 20px 20px;
 				/*background-color: rgb(80,80,80);*/
 				background-color: #000;
+				z-index: 99999999;
 
 			}
 
@@ -198,74 +209,77 @@
 		</style>
 	</head>
 	<body>
+
 		<div class="menu">
-			<a href="../" style="margin-right:50px">goto_index</a>
-			<a href="../gui" style="margin-right:50px">goto_gui</a>
-    		<a href="../editor/archive.php">goto_archive</a>
+			<a href="../" style="margin-right:50px;">_three.js playGnd</a>
+			<a href="../gui" style="margin-right:50px">[1] gui</a>
+			<a href="../editor/editor.html" target="_blank" style="margin-right:50px;color:#fff">[2] editor</a>
+    		<a href="../archive">[3] archive</a>
 		</div>
+
 		<div id="preview"></div>
 		<div id="editor"></div>
 		<div id="toolbar"></div>
 		<div id="popup">
 			<div id="snip">
 
-				<a href="https://gist.github.com/nbriz/90cabdeb21ea2510c5ae" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/90cabdeb21ea2510c5ae" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip1.gif"> <br> rotate mesh
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/41ba4223df04c3fa4abd" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/41ba4223df04c3fa4abd" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip2.gif"> <br> swing camera and/or mesh
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/65bca341f3b7eadb2874" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/65bca341f3b7eadb2874" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip3.gif"> <br> keep camera focused on mesh
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/27eab66b01f3cc09d8c2" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/27eab66b01f3cc09d8c2" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip4.gif"> <br> leave trails
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/0d92ea0b91a81c7dd6fd" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/0d92ea0b91a81c7dd6fd" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip5.gif"> <br> random mesh color
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/f6187463e7c0bb9166ac" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/f6187463e7c0bb9166ac" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip6.gif"> <br> oscillate mesh hue
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/24b503ab96153947fbfe" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/24b503ab96153947fbfe" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip7.gif"> <br> oscillate mesh saturation
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/c6ebef10e97cec354350" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/c6ebef10e97cec354350" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip8.gif"> <br> loop (multiply) mesh
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/c6ebef10e97cec354350" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/c6ebef10e97cec354350" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip9.gif"> <br> loop mesh (with trails)
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/4ee2c35872e44fddc494" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/4ee2c35872e44fddc494" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip10.gif"> <br> morph (stretch) points
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/9fbfcb815feea9f3ab5a" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/9fbfcb815feea9f3ab5a" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip11.gif"> <br> morph all points randomly
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/d994b193cd2090cb93bf" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/d994b193cd2090cb93bf" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip12.gif"> <br> create particles
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/7142d0759d6bca236bb7" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/7142d0759d6bca236bb7" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip13.gif"> <br> create text
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/53419c61260c1591b500" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/53419c61260c1591b500" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip14.gif"> <br> dither shader
 				</div></a>
 
-				<a href="https://gist.github.com/nbriz/ab18e9862ee9a4c1badc" target="_blank"><div>
+				<a href="https://gist.github.com/nbriz/ab18e9862ee9a4c1badc" target="_blank" onclick="closeThis()"><div>
 					<img src="../images/snip15.gif"> <br> render as ASCII
 				</div></a>
 
@@ -293,8 +307,34 @@
 
 			//
 
-			var defaultCode = decode( 'pVRRb9owEH6GX3FlL0GiCXuoNFFAmiiDSZtWtZ3QniYnPmJ3iZ2dnWYw7b/PdhJaKu1pEUmcu/P3nb/PZn5x82X18O12DcKWxXI4b1+DuUDG3XswL9EyyAQjg3Yxqu3+8t0oJIw9FOhHg1TzA/z2o0HKsh856Vrxy0wXmmbwZh+u65AuGeVSzWDafuonpH2hmxkIyTmqEP3jwZMefZ50ncw9i6cL3BnJyoKhbDES1lazJEmJqRwpJXmMFdqkYKlJrCDER/O9Kthho3jy2IXiUqr40YyWjihALf8T9QYtZlbTv0CXQ780uYcILuBU3GCaFzB+DjDON2h3mG4+fUZjWI7ROIji7ydGkLESiU3AZKhwAoSKIyFd9/kctTOMDhMomUWSrHAjNOI68O9rlVmpFTgv6yoaO9OCD37mDhbQSMV1E0ulkHaSWzGB7avwFmUubGtfz+5KFDbwsL1br+PQ/F2X6bo/VcaO+F4eMYKdh+6yXGd1icrG3uKYVZWrXglZ8Oi0wJjrcl2gr/KzwrRWizPyWyRTOSnlE65CNoKr6QR2yXYCb91v6q6etZ0eV9pIr0l8dEhX02kHHgQ+w773kX5Bz48kgYoZi3DQtfNHc4Q96RKswJMbm68fQbhlDIftBj/zghNrnq0g/Fmjse+VdAa69AdybUahCF5yO1r8VTmHgySNtOIVt1HSCWmNs1/VHfuZFe0g6rdSp2Ynbttjt00CbdtmyL7c3/6EtifTnVT/3/EX' );
+			var templateCode = 'pVRRb9owEH6GX3FlL0GiCXuoNFFAmiiDSZtWtZ3QniYnPmJ3iZ2dnWYw7b/PdhJaKu1pEUmcu/P3nb/PZn5x82X18O12DcKWxXI4b1+DuUDG3XswL9EyyAQjg3Yxqu3+8t0oJIw9FOhHg1TzA/z2o0HKsh856Vrxy0wXmmbwZh+u65AuGeVSzWDafuonpH2hmxkIyTmqEP3jwZMefZ50ncw9i6cL3BnJyoKhbDES1lazJEmJqRwpJXmMFdqkYKlJrCDER/O9Kthho3jy2IXiUqr40YyWjihALf8T9QYtZlbTv0CXQ780uYcILuBU3GCaFzB+DjDON2h3mG4+fUZjWI7ROIji7ydGkLESiU3AZKhwAoSKIyFd9/kctTOMDhMomUWSrHAjNOI68O9rlVmpFTgv6yoaO9OCD37mDhbQSMV1E0ulkHaSWzGB7avwFmUubGtfz+5KFDbwsL1br+PQ/F2X6bo/VcaO+F4eMYKdh+6yXGd1icrG3uKYVZWrXglZ8Oi0wJjrcl2gr/KzwrRWizPyWyRTOSnlE65CNoKr6QR2yXYCb91v6q6etZ0eV9pIr0l8dEhX02kHHgQ+w773kX5Bz48kgYoZi3DQtfNHc4Q96RKswJMbm68fQbhlDIftBj/zghNrnq0g/Fmjse+VdAa69AdybUahCF5yO1r8VTmHgySNtOIVt1HSCWmNs1/VHfuZFe0g6rdSp2Ynbttjt00CbdtmyL7c3/6EtifTnVT/3/EX';
 
+			var defaultCode = decode( templateCode);
+
+
+
+			var QueryString = function () {
+			  // This function is anonymous, is executed immediately and 
+			  // the return value is assigned to QueryString!
+			  var query_string = {};
+			  var query = window.location.search.substring(1);
+			  var vars = query.split("&");
+			  for (var i=0;i<vars.length;i++) {
+			    var pair = vars[i].split("=");
+			    	// If first entry with this name
+			    if (typeof query_string[pair[0]] === "undefined") {
+			      query_string[pair[0]] = pair[1];
+			    	// If second entry with this name
+			    } else if (typeof query_string[pair[0]] === "string") {
+			      var arr = [ query_string[pair[0]], pair[1] ];
+			      query_string[pair[0]] = arr;
+			    	// If third or later entry with this name
+			    } else {
+			      query_string[pair[0]].push(pair[1]);
+			    }
+			  } 
+			    return query_string;
+			} ();
 
 
 			var documents = [ { filename: 'webgl_sketch', filetype: 'text/plain', autoupdate: true, code: defaultCode } ];
@@ -375,7 +415,7 @@
 
 				documents[ 0 ].autoupdate = documents[ 0 ].autoupdate === false;
 
-				localStorage.codeeditor = JSON.stringify( documents );
+				//localStorage.codeeditor = JSON.stringify( documents );
 
 			}, false );
 			buttonUpdate.appendChild( checkbox );
@@ -467,8 +507,15 @@
 
 				if ( confirm( 'Are you sure?' ) === true ) {
 
-					editor.setValue( defaultCode );
-					save();
+
+
+					if(QueryString.data != undefined){
+						editor.setValue( QueryString.data ); // --- show data from fork 
+					} else {
+						editor.setValue( defaultCode ); // --- this editor always shows template (reset on load)
+					}
+
+					// save();
 
 				}
 
@@ -481,31 +528,43 @@
 			buttonArchive.textContent = 'archive_It';
 			buttonArchive.addEventListener( 'click', function ( event ) {
 
+				alert('don\'t forget to give shoutOutz + attribute your work with in a comment in your code \n\nonce you save your sketch there\'s no going back :)');
+
 				// HIDE SNIPPETS IF OPEN
 				var snip = document.getElementById( 'snip' );
 				snip.style.display = 'none';
 
 				var form = document.createElement( 'form' );
 				form.setAttribute("method","post");
-				form.setAttribute("action","archive.php");
+				form.setAttribute("action","http://threejsplaygnd.brangerbriz.net/archive/index.php");
 				form.setAttribute("name","form");
-				form.setAttribute("onsubmit","return validateForm()");
+				// form.setAttribute("onsubmit","return validateForm()");
 
 				var dat = document.createElement('input');
 				form.appendChild( dat );
-				dat.setAttribute("name","sketchdata");
+				dat.setAttribute("name","sketchCode");
 				dat.value = encode( editor.getValue() );
+				dat.style.display = "none";
+
+				var dat = document.createElement('input');
+				form.appendChild( dat );
+				dat.setAttribute("name","isForkOf");
+				if(QueryString.id != undefined){
+					dat.value = QueryString.id;
+				} else {
+					// dat.value = null;
+				}
 				dat.style.display = "none";
 
 				var n = document.createElement('input');
 				form.appendChild( n );
-				n.setAttribute("name","name");
+				n.setAttribute("name","sketchName");
 				n.value = "sketch name";
 				n.style.marginTop = "15px";
 
 				var a = document.createElement('input');
 				form.appendChild( a );
-				a.setAttribute("name","author");
+				a.setAttribute("name","userName");
 				a.value = "your name";
 
 				var s = document.createElement('input');
@@ -513,8 +572,25 @@
 				s.setAttribute("type","submit");
 				s.value = "save";
 
+				form.onsubmit = function(){
+		            var nv = n.value;
+		            var av = a.value;
+		            var newData = encode( editor.getValue() );
+		            if (nv==null || nv=="" || nv=="sketch name") { alert("you forgot to name your sketch"); return false; }       
+		            if (av==null || av=="" || av=="your name") { alert("you forgot your name"); return false; }
+		            if(newData == QueryString.data || newData == QueryString.data + "=" || newData == QueryString.data + "=="){
+		            	alert('it\'s not a remix if you don\'t make any changes ;)'); return false;
+		            }
+		            if(newData == templateCode || newData == templateCode + "=" || newData == templateCode + "=="){
+		            	alert('it\'s not a sketch if you don\'t make anything ;)'); return false;
+		            }
+
+				}
+
 				popup.set( form );
 				popup.show();
+
+
 
 			}, false );
 			menu.appendChild( buttonArchive );
@@ -629,7 +705,7 @@
 				if ( event.keyCode === 83 && ( event.ctrlKey === true || event.metaKey === true ) ) {
 
 					event.preventDefault();
-					save();
+					// save();
 
 				}
 
@@ -784,24 +860,24 @@
 
 			};
 
-			var save = function () {
+			// var save = function () {
 
-				documents[ 0 ].code = editor.getValue();
+			// 	documents[ 0 ].code = editor.getValue();
 
-				localStorage.codeeditor = JSON.stringify( documents );
+			// 	localStorage.codeeditor = JSON.stringify( documents );
 
-				var blob = new Blob( [ editor.getValue() ], { type: documents[ 0 ].filetype } );
-				var objectURL = URL.createObjectURL( blob );
+			// 	var blob = new Blob( [ editor.getValue() ], { type: documents[ 0 ].filetype } );
+			// 	var objectURL = URL.createObjectURL( blob );
 
-				// buttonDownload.href = objectURL;
+			// 	// buttonDownload.href = objectURL;
 
-				var date = new Date();
-				// buttonDownload.download = documents[ 0 ].filename;
+			// 	var date = new Date();
+			// 	// buttonDownload.download = documents[ 0 ].filename;
 
-				// buttonSave.style.display = 'none';
-				// buttonDownload.style.display = '';
+			// 	// buttonSave.style.display = 'none';
+			// 	// buttonDownload.style.display = '';
 
-			};
+			// };
 
 			var toggle = function () {
 
@@ -828,19 +904,32 @@
 			update();
 
 			// buttonHide.click(); // ----- HIDE THE SOURCE ONLOAD ../n!ck
-			editor.setValue( defaultCode ); // --- this editor always shows template (reset on load)
+
+			// CHECK IF COMING FROM FORK
+
+			if(QueryString.data != undefined){
+				editor.setValue( decode( QueryString.data ) ); // --- show data from fork 
+			} else {
+				editor.setValue( defaultCode ); // --- this editor always shows template (reset on load)
+			}
+
+			function closeThis() { popup.hide(); }
+
+
 			//save();
 
-
-			// validation for 'archive_it'
-	        function validateForm() {
-	            var n=document.forms["form"]["name"].value;
-	            var a=document.forms["form"]["author"].value;
-	            if (n==null || n=="" || n=="sketch name") { alert("you forgot to name your sketch"); return false; }       
-	            if (a==null || a=="" || a=="your name") { alert("you forgot your name"); return false; }
-	        }
-
 		</script>
+
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		  ga('create', 'UA-6098550-26', 'brangerbriz.net');
+		  ga('send', 'pageview');
+
+		</script>	
 
 	</body>
 </html>

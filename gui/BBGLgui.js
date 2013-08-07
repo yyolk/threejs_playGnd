@@ -13,9 +13,12 @@
 			
 			bg = document.body.style;
 			bg.background = "#fff";
+			var bgcode; // for console
 
 			cnsl = document.getElementById('mcnsl').style;
 			cnsl.opacity = 0.8;
+
+			var CUSTOM_TEXTURE; // for including custom texturez via proxy
 
 
 			// ---------------------------------------------------------------------------------------------------------------------------
@@ -60,25 +63,42 @@
 				m.add(meshObj, 'geometry',{cube:0,sphere:1,icosahedron:2,octahedron:3,tetrahedron:4,cylinder:5,torus:6,knot:7,lathe:8,plane:9,circle:10,ring:11,randomConvex:12}).onChange(function(v) {
 						meshObj.make();
 						geometriezGUI(meshObj.geometry);
+						if(matgui!=undefined){materialzGUI(meshObj.material);}
 				});
 				m.add(meshObj, 'material',{normal:0,basic:1,lambert:2,phong:3}).onChange(function(v) {
 						meshObj.make();
 						materialzGUI(meshObj.material);
 				});
-				m.add(meshObj,'openGeo').name('open_geo_cntrl');
-				m.add(meshObj,'openMat').name('open_mat_cntrl');
-				
-				m.add(meshObj,"texture").onChange(function(){				
-					meshObj.make(); 
-					if(matgui!=undefined){ matgui.destroy(); matgui = undefined; }
-					meshObj.openMat();
-				});
+				m.add(meshObj,'openGeo').name('OPEN_GEOMETRY_CNTRL');
+				m.add(meshObj,'openMat').name('OPEN_MATERIAL_CNTRL');
 
 				m.add(meshObj,"smooth").onChange(function(){				
 					meshObj.make(); 
 				});
-				m.add(meshObj,"castShadow").onChange(function(){
-					meshObj.make();
+				m.add(meshObj,"castShadow").onChange(function(v){
+					if(v==true){
+						renderer.shadowMapEnabled = true;
+						meshObj.make();
+						if(planeObj.togglePlane==true){planeObj.makePlane();}	
+						if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }	
+						if(lights.AmbientLight==true){lights.makeAmbient();}		
+						if(lights.HemisphereLight==true){lights.makeHem();}				
+						if(lights.DirectionalLight==true){lights.makeDir();}				
+						if(lights.SpotLight1==true){lights.makeSpot1();}				
+						if(lights.SpotLight2==true){lights.makeSpot2();}				
+
+					} else {
+						renderer.shadowMapEnabled = false;
+						meshObj.make();
+						if(planeObj.togglePlane==true){planeObj.makePlane();}	
+						if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }	
+						if(lights.AmbientLight==true){lights.makeAmbient();}		
+						if(lights.HemisphereLight==true){lights.makeHem();}				
+						if(lights.DirectionalLight==true){lights.makeDir();}				
+						if(lights.SpotLight1==true){lights.makeSpot1();}				
+						if(lights.SpotLight2==true){lights.makeSpot2();}	
+					}
+					updateEnviroCode();
 				});
 				m.add(meshObj,"scale",0.1,2).onChange(function(){
 					mesh.scale.x = mesh.scale.y = mesh.scale.z = meshObj.scale;
@@ -110,29 +130,48 @@
 			// 									    PLANE FOLDER 	|
 			// 														|
 				var p = gui.addFolder('plane');
+				var wftog = false, ptog = false;
 				p.add(planeObj,'toggleWireframe').onChange(function(v){
 					if(v==true){ planeObj.makeWireframe(); }
 					else { scene.remove( wireplane ); }
+					updateEnviroCode();
+
+					if(planeObj.toggleWireframe == true && wftog == false){
+						p.add(planeObj,'w_scale',1,30).onChange(function(){
+							if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }
+							updateEnviroCode();
+						});
+						// p.add(planeObj,'w_line',1,10).onChange(function(){
+						// 	if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }
+						// });	
+						wftog = true;				
+					}
 				});
-				p.add(planeObj,'w_scale',1,30).onChange(function(){
-					if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }
-				});
-				// p.add(planeObj,'w_line',1,10).onChange(function(){
-				// 	if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }
-				// });
+
 				p.add(planeObj,'togglePlane').onChange(function(v){
 					if(v==true){ planeObj.makePlane(); }
 					else { scene.remove( plane ); }
+					updateEnviroCode();
+
+					if(planeObj.togglePlane == true && ptog == false){
+						p.add(planeObj, 'texture', {mario:0,linen:1,crate:2,dots:3,rock_tile:4,water:5,wood:6,white:7,brillo:8,soup:9}).onChange(function() {
+							if(planeObj.togglePlane==true){ planeObj.makePlane(); }
+							updateEnviroCode();
+						});
+						p.add(planeObj,'scale',1,30).onChange(function(){
+							if(planeObj.togglePlane==true){ planeObj.makePlane(); }
+							updateEnviroCode();
+						});
+						p.add(planeObj,'repeat',1,160).onChange(function(){
+							if(planeObj.togglePlane==true){ planeObj.makePlane(); }
+							updateEnviroCode();
+						});		
+						ptog = true;	
+					}
 				});
-				p.add(planeObj, 'texture', {mario:0,linen:1,crate:2,dots:3,rock_tile:4,water:5,wood:6,white:7}).onChange(function() {
-					if(planeObj.togglePlane==true){ planeObj.makePlane(); }
-				});
-				p.add(planeObj,'scale',1,30).onChange(function(){
-					if(planeObj.togglePlane==true){ planeObj.makePlane(); }
-				});
-				p.add(planeObj,'repeat',1,160).onChange(function(){
-					if(planeObj.togglePlane==true){ planeObj.makePlane(); }
-				});
+
+
+
 
 
 
@@ -141,37 +180,56 @@
 			// 									    ENVIRO FOLDER 	|
 			// 														|
 				var e = gui.addFolder('environment');
-				e.addColor(bg, 'background');
-				e.add(enviro,'renderShadows').onChange(function(v){
-					if(v==true){
-						renderer.shadowMapEnabled = true;
-						meshObj.make();
-						if(planeObj.togglePlane==true){planeObj.makePlane();}	
-						if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }					
-					} else {
-						renderer.shadowMapEnabled = false;
-						if(planeObj.togglePlane==true){planeObj.makePlane();}	
-						if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }	
-					}
-				});
+				var edeetz = false;
+				// ****BUG**** Firefox throwing an error: 
+				//uncaught exception: Failed to interpret color arguments
+				if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){/*IS FIREFOX*/}
+				else{
+					e.addColor(bg, 'background').onChange(function(v){
+						bgcode = v;
+						updateEnviroCode();
+					});
+				}
+
+				// e.add(enviro,'renderShadows').onChange(function(v){
+				// 	if(v==true){
+				// 		renderer.shadowMapEnabled = true;
+				// 		meshObj.make();
+				// 		if(planeObj.togglePlane==true){planeObj.makePlane();}	
+				// 		if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }					
+				// 	} else {
+				// 		renderer.shadowMapEnabled = false;
+				// 		if(planeObj.togglePlane==true){planeObj.makePlane();}	
+				// 		if(planeObj.toggleWireframe==true){ planeObj.makeWireframe(); }	
+				// 	}
+				// 	updateEnviroCode();
+				// });
 				e.add(enviro,'fog').onChange(function(v){
 					if(v==true){
 						enviro.ffar = 9000;
 						enviro.makeFog();
+						if(edeetz == false){
+							e.addColor( enviro, 'fclr').name('color').onChange( function() {
+							  	scene.fog.color.setHex( dec2hex(enviro.fclr) ); 
+							  	updateEnviroCode();
+							}); 
+							e.add(enviro,'fnear',1,10000).name('near').onChange(function(){
+								enviro.makeFog();
+								updateEnviroCode();
+							});
+							e.add(enviro,'ffar',1,10000).name('far').onChange(function(){
+								enviro.makeFog();
+								updateEnviroCode();
+							});
+							edeetz = true;
+						}
 					} else {
 						enviro.ffar = enviro.reset;
 						enviro.makeFog();
 					}
+					updateEnviroCode();
 				});
-				e.addColor( enviro, 'fclr').name('color').onChange( function() {
-				  	scene.fog.color.setHex( dec2hex(enviro.fclr) ); 
-				}); 
-				e.add(enviro,'fnear',1,10000).name('near').onChange(function(){
-					enviro.makeFog();
-				});
-				e.add(enviro,'ffar',1,10000).name('far').onChange(function(){
-					enviro.makeFog();
-				});
+
 
 
 
@@ -190,6 +248,7 @@
 						if(lightgui!=undefined){lightgui.destroy(); lightgui = undefined;}
 						scene.remove(ambientLight);
 					}
+					updateLightCode();
 				});
 				l.add(lights,'HemisphereLight').onChange(function(v){
 					if(v==true){
@@ -200,6 +259,7 @@
 						if(lightgui!=undefined){lightgui.destroy(); lightgui = undefined;}
 						scene.remove(hemisphereLight);
 					}
+					updateLightCode();
 				});
 				l.add(lights,'DirectionalLight').onChange(function(v){
 					if(v==true){
@@ -210,6 +270,7 @@
 						if(lightgui!=undefined){lightgui.destroy(); lightgui = undefined;}
 						scene.remove(directionalLight);
 					}
+					updateLightCode();
 				});
 				l.add(lights,'SpotLight1').onChange(function(v){
 					if(v==true){
@@ -220,6 +281,7 @@
 						if(lightgui!=undefined){lightgui.destroy(); lightgui = undefined;}
 						scene.remove(spotLight1);
 					}
+					updateLightCode();
 				});
 				l.add(lights,'SpotLight2').onChange(function(v){
 					if(v==true){
@@ -230,11 +292,9 @@
 						if(lightgui!=undefined){lightgui.destroy(); lightgui = undefined;}
 						scene.remove(spotLight2);
 					}
+					updateLightCode();
 				});
-				l.add(lights,'open').name('open_ctrlz');
-
-
-
+				l.add(lights,'open').name('OPEN_LIGHT_CONTROL');
 
 			}
 
@@ -282,29 +342,52 @@
 
 				matgui.add(meshObj,'wireframe').onChange(function(v) {
 					meshObj.make();
+					if(matgui!=undefined){ materialzGUI(meshObj.material); }
 				}); 
-				matgui.add(meshObj,'linewidth',1,8).onChange(function(v) {
-					if(meshObj.wireframe ==true){ meshObj.make(); }
-				}); 
-				matgui.add(meshObj,'opacity',0,1).onChange(function(v) {
-					meshObj.make(); 
-				}); 
-				matgui.add(meshObj,'cyliOE').name('openEnded').onChange(function(){
+				if(meshObj.wireframe == true){
+					matgui.add(meshObj,'linewidth',1,8).onChange(function(v) {
+						meshObj.make(); 
+					}); 
+				}
+
+				matgui.add(meshObj,'transparent').onChange(function(v) {
 					meshObj.make();
-				});
+					if(matgui!=undefined){ materialzGUI(meshObj.material); }
+				}); 
+				if(meshObj.transparent==true){
+					matgui.add(meshObj,'opacity',0,1).onChange(function(v) {
+						meshObj.make(); 
+					}); 					
+				}
+
+				if(meshObj.geometry == 5){
+					matgui.add(meshObj,'cyliOE').name('openEnded').onChange(function(){
+						meshObj.make();
+					});
+				}
 				matgui.add(meshObj,"sided",{FrontSide:0,BackSide:1,DoubleSide:2}).onChange(function(){				
 					meshObj.make(); 
 				});
+				if(v==1 || v==2 || v==3){
+					matgui.add(meshObj,"texture").onChange(function(){				
+						meshObj.make(); 
+						if(matgui!=undefined){ matgui.destroy(); matgui = undefined; }
+						meshObj.openMat();
+					});
+				}
 				if(meshObj.texture==true){
-					matgui.add(meshObj, 'txt', {white:0, mario:1,linen:2,crate:3,dots:4,rock_tile:5,water:6,wood:7}).onChange(function() {
+					matgui.add(meshObj, 'txt', {white:0, mario:1,linen:2,crate:3,dots:4,rock_tile:5,water:6,wood:7, brillo:8,soup:9}).onChange(function() {
+						CUSTOM_TEXTURE = undefined;
 						meshObj.make();
 					}).name('texture');
 					matgui.add(meshObj,'txtRepeat',1,10).onChange(function(){
 						meshObj.make();
 					});
+					matgui.add(meshObj,'customTexture').name('custom_texture');
+
 				}
 
-				matgui.add(meshObj,'closeMat').name('close_ctrlz');
+				matgui.add(meshObj,'closeMat').name('[X]-CLOSE');
 
 			}
 
@@ -467,7 +550,7 @@
 					});
 					geogui.add(meshObj,'make').name('randomize');
 				}
-				geogui.add(meshObj,'closeGeo').name('close_ctrlz');
+				geogui.add(meshObj,'closeGeo').name('[X]-CLOSE');
 
 			}
 
@@ -483,6 +566,7 @@
 					var amb = lightgui.addFolder('AmbientLight');
 					amb.addColor( lights, 'aclr').onChange( function() {
 					  	ambientLight.color.setHex( dec2hex(lights.aclr) ); 
+					  	updateLightCode();
 					}); 
 					amb.open();
 				}
@@ -490,31 +574,39 @@
 					var hem = lightgui.addFolder('HemisphereLight');
 					hem.addColor( lights, 'hs').onChange( function() {
 					  	hemisphereLight.color.setHex( dec2hex(lights.hs) ); 
-					}); 
-					hem.addColor( lights, 'hg').onChange( function() {
-					  	hemisphereLight.groundColor.setHex( dec2hex(lights.hg) ); 
+					  	updateLightCode();
 					}); 
 					hem.add(lights,'hi',0,10).name('intensity').onChange(function(){
 						hemisphereLight.intensity = lights.hi;
+						updateLightCode();
 					});
+					hem.addColor( lights, 'hg').onChange( function() {
+					  	hemisphereLight.groundColor.setHex( dec2hex(lights.hg) );
+					  	updateLightCode(); 
+					}); 
 					hem.open();
 				}
 				if(lights.DirectionalLight==true){
 					var dir = lightgui.addFolder('DirectionalLight');
 					dir.addColor( lights, 'dclr').onChange( function() {
 					  	directionalLight.color.setHex( dec2hex(lights.dclr) ); 
+					  	updateLightCode();
 					}); 
 					dir.add(lights,'di',0,1).name('intensity').onChange(function(){
 						directionalLight.intensity = lights.di;
+						updateLightCode();
 					});
 					dir.add(lights,'dx',-5,10).name('position.x').onChange(function(){
 						directionalLight.position.x = lights.dx;
+						updateLightCode();
 					});
 					dir.add(lights,'dy',-5,10).name('position.y').onChange(function(){
 						directionalLight.position.y = lights.dy;
+						updateLightCode();
 					});
 					dir.add(lights,'dz',-5,10).name('position.z').onChange(function(){
 						directionalLight.position.z = lights.dz;
+						updateLightCode();
 					});
 					dir.open();
 				}
@@ -522,21 +614,27 @@
 					var sp1 = lightgui.addFolder('SpotLight1');
 					sp1.addColor( lights, 's1clr').onChange( function() {
 					  	spotLight1.color.setHex( dec2hex(lights.s1clr) ); 
+					  	updateLightCode();
 					}); 
+					sp1.add(lights,'s1i',0,10).name('intensity').onChange(function(){
+						spotLight1.intensity = lights.s1i;
+						updateLightCode();
+					});
 					sp1.add(lights,'s1x',-1000,1000).name('position.x').onChange(function(){
 						spotLight1.position.x = lights.s1x;
+						updateLightCode();
 					});
 					sp1.add(lights,'s1y',-1000,1000).name('position.y').onChange(function(){
 						spotLight1.position.y = lights.s1y;
+						updateLightCode();
 					});
 					sp1.add(lights,'s1z',-1000,1000).name('position.z').onChange(function(){
 						spotLight1.position.z = lights.s1z;
-					});
-					sp1.add(lights,'s1i',0,10).name('intensity').onChange(function(){
-						spotLight1.intensity = lights.s1i;
+						updateLightCode();
 					});
 					sp1.add(lights,'s1sd',-1,1).name('shadowDarkness').onChange(function(){
 						spotLight1.shadowDarkness = lights.s1sd;
+						updateLightCode();
 					});
 					sp1.open();
 				}
@@ -544,26 +642,32 @@
 					var sp2 = lightgui.addFolder('SpotLight2');
 					sp2.addColor( lights, 's2clr').onChange( function() {
 					  	spotLight2.color.setHex( dec2hex(lights.s2clr) ); 
+					  	updateLightCode();
 					}); 
+					sp2.add(lights,'s2i',0,10).name('intensity').onChange(function(){
+						spotLight2.intensity = lights.s2i;
+						updateLightCode();
+					});
 					sp2.add(lights,'s2x',-1000,1000).name('position.x').onChange(function(){
 						spotLight2.position.x = lights.s2x;
+						updateLightCode();
 					});
 					sp2.add(lights,'s2y',-1000,1000).name('position.y').onChange(function(){
 						spotLight2.position.y = lights.s2y;
+						updateLightCode();
 					});
 					sp2.add(lights,'s2z',-1000,1000).name('position.z').onChange(function(){
 						spotLight2.position.z = lights.s2z;
-					});
-					sp2.add(lights,'s2i',0,10).name('intensity').onChange(function(){
-						spotLight2.intensity = lights.s2i;
+						updateLightCode();
 					});
 					sp2.add(lights,'s2sd',-1,1).name('shadowDarkness').onChange(function(){
 						spotLight2.shadowDarkness = lights.s2sd;
+						updateLightCode();
 					});
 					sp2.open();
 				}
 
 
-				lightgui.add(lights,'close').name('close_ctrlz');
+				lightgui.add(lights,'close').name('[X]-CLOSE');
 
 			}
